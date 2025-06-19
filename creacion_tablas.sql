@@ -26,8 +26,8 @@ CREATE TABLE usuario (
     clave varchar(30),
     rol varchar(10),
     ubicacion varchar(20),
-    nombre_usuario char(50),
-    apellido_usuario char(50),
+    nombre_usuario varchar(50),
+    apellido_usuario varchar(50),
     direccion_usuario varchar(30)
 );
 
