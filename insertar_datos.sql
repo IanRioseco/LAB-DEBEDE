@@ -17,10 +17,15 @@ values ('Rol'),
 ('Cooperativo'),
 ('Competitivo'),
 ('Familiar'),
+('Investigacion'),
+('Equipo'),
+('coop-Estrategia'),
+('Historyia'),
 ('Estrategia');
 
 insert into tienda (nombre_tienda, nombre_jefe, id_usuario)
-values ('Todo Juegos', 'Carla', 3),
+values 
+('Todo Juegos', 'Carla', 3),
 ('Play Center', 'Felipe', 6),
 ('Mega Games', 'Hector', 8);
 
