@@ -17,15 +17,18 @@ where id_producto = /*elegir*/ and id_carro = /*elegir*/;
 -- Mostrar los juegos de mesa / cartas del carrito de compras --
 
 -- Juegos de mesa:
-select P.id_producto, P.descripcion_producto
-from producto P
-join juego_de_mesa JM on P.id_producto = JM.id_producto;
+select P.nombre_producto, PC.cantidad_producto
+from producto_carro PC
+join producto P on P.id_producto = PC.id_producto
+join juego_mesa JM on P.id_producto = JM.id_producto
+where PC.id_carro = /*id de quien se quiera consultar*/
 
 -- Juegos de carta:
-select P.id_producto, P.descripcion_producto
-from producto P
-join juego_cartas JC on P.id_producto = JC.id_producto;
-
+select P.nombre_producto, PC.cantidad_producto
+from producto_carro PC
+join producto P on PC.id_producto = P.id_producto
+join carta_coleccionable C on P.id_producto = C.id_producto
+where PC.id_carro = /*id de quien se quiera consultar*/;
 
 -- Mostrar el precio total a pagar por el carrito de compras --
 
@@ -41,10 +44,17 @@ where PC.id_carro = /*id del carro al que quiero consultar*/;
 
 -- Mostrar ranking de los productos con mas ventas --
 
+select P.nombre_producto, sum(PC.cantidad_producto) TotalVendido
+from producto_carro PC
+join producto P on PC.id_producto = P.id_producto
+join carro C on PC.id_carro = C.id_carro
+where C.estado = true
+group by P.id_producto, P.nombre_producto
+order by TotalVendido desc;
 
 -- Mostrar lista de deseos de un usuario --
 
-select P.id_producto, P.descripcion_producto
+select P.id_producto, P.nombre_producto
 from lista_deseos L
 join lista_deseos_producto LP on L.id_lista = LP.id_lista
 join producto P on LP.id_producto = P.id_producto
