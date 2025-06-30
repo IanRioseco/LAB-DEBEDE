@@ -31,8 +31,24 @@ public class CarroController {
     }
 
     @PostMapping
-    public Carro createCarro(@RequestBody Carro carro) {
-        return carroService.saveCarro(carro);
+    public Carro createCarro(@RequestBody CarroRequest carroRequest) {
+        Carro carro = new Carro();
+        carro.setPrecioTotal(carroRequest.getPrecioTotal());
+        carro.setEstado(carroRequest.getEstado());
+        return carroService.saveCarro(carro, carroRequest.getCorreoUsuario());
+    }
+
+    // DTO para la petición
+    public static class CarroRequest {
+        private Integer precioTotal;
+        private Boolean estado;
+        private String correoUsuario;
+        public Integer getPrecioTotal() { return precioTotal; }
+        public void setPrecioTotal(Integer precioTotal) { this.precioTotal = precioTotal; }
+        public Boolean getEstado() { return estado; }
+        public void setEstado(Boolean estado) { this.estado = estado; }
+        public String getCorreoUsuario() { return correoUsuario; }
+        public void setCorreoUsuario(String correoUsuario) { this.correoUsuario = correoUsuario; }
     }
 
     @PutMapping("/{id}")

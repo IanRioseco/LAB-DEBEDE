@@ -1,5 +1,6 @@
 package com.example.backendTienda.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import jakarta.persistence.Table;
 
@@ -20,6 +21,10 @@ public class Tienda {
     @OneToOne
     @JoinColumn(name = "id_usuario", referencedColumnName = "id_usuario", nullable = false)
     private Usuario usuarioJefe;
+
+    @ManyToMany(mappedBy = "tiendas")
+    @JsonIgnore
+    private java.util.Set<Producto> productos;
 
     //Getters y Setters
     public Long getIdTienda() {
@@ -45,5 +50,11 @@ public class Tienda {
     }
     public void setUsuarioJefe(Usuario usuarioJefe) {
         this.usuarioJefe = usuarioJefe;
+    }
+    public java.util.Set<Producto> getProductos() {
+        return productos;
+    }
+    public void setProductos(java.util.Set<Producto> productos) {
+        this.productos = productos;
     }
 }
