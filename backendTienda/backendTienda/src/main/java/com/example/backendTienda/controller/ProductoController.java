@@ -58,6 +58,7 @@ public class ProductoController {
         public Integer stock;
         public String urlImagen;
         public String direccionComercial;
+        public String categoria;
         public java.util.List<TiendaDTO> tiendas;
         public ProductoDTO(Producto p) {
             this.idProducto = p.getIdProducto();
@@ -67,6 +68,7 @@ public class ProductoController {
             this.stock = p.getStock();
             this.urlImagen = p.getUrlImagen();
             this.direccionComercial = p.getDireccionComercial();
+            this.categoria = (p.getCategoria() != null) ? p.getCategoria().getDescripcion() : null;
             if (p.getTiendas() != null) {
                 this.tiendas = p.getTiendas().stream().map(TiendaDTO::new).collect(Collectors.toList());
             }
