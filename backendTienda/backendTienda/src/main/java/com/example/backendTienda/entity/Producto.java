@@ -39,6 +39,10 @@ public class Producto {
     @OneToMany(mappedBy = "producto")
     private java.util.Set<ProductoCarro> productosCarro;
 
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "id_categoria")
+    private Categoria categoria;
+
     // Getters y setters
     public Integer getIdProducto() {
         return idProducto;
@@ -101,5 +105,12 @@ public class Producto {
     }
     public void setProductosCarro(java.util.Set<ProductoCarro> productosCarro) {
         this.productosCarro = productosCarro;
+    }
+
+    public Categoria getCategoria() {
+        return categoria;
+    }
+    public void setCategoria(Categoria categoria) {
+        this.categoria = categoria;
     }
 }
