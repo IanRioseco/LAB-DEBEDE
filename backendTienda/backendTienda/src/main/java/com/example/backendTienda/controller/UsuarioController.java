@@ -49,6 +49,7 @@ public class UsuarioController {
     }
 
     // Obtener un usuario por ID
+    //REVISAR FUNCION
     @GetMapping("/{id}")
     public ResponseEntity<Usuario> obtenerUsuarioPorId(@PathVariable Long id) {
         return usuarioService.obtenerPorId(id)
@@ -57,6 +58,7 @@ public class UsuarioController {
     }
 
     // Actualizar un usuario
+    //REVISAR FUNCION
     @PutMapping("/{id}")
     public ResponseEntity<Usuario> actualizarUsuario(@PathVariable Long id, @RequestBody Usuario usuario) {
         usuario.setId(id); // Establecer el ID recibido como parámetro

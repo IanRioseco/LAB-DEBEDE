@@ -19,7 +19,7 @@ public class Usuario {
     @Column(name = "contrasena", length = 100)
     private String contrasena;
 
-    @Column(name = "rol",nullable = false)
+    @Column(name = "rol", nullable = false)
     private String rol;
 
     @Column(name = "ubicacion", length = 20)
@@ -52,7 +52,6 @@ public class Usuario {
     public String getCorreo() {
         return correo;
     }
-
     public void setCorreo(String correo) {
         this.correo = correo;
     }
@@ -75,22 +74,21 @@ public class Usuario {
     public String getRol() {
         return rol;
     }
-
     public void setRol(String rol) {
         this.rol = rol;
     }
+
     public String getApellidoUsuario() {
         return apellidoUsuario;
     }
-    
     @JsonProperty("apellido")
     public void setApellidoUsuario(String apellidoUsuario) {
         this.apellidoUsuario = apellidoUsuario;
     }
+
     public String getDireccion() {
         return direccion;
     }
-    
     public void setDireccion(String direccion) {
         this.direccion = direccion;
     }
@@ -98,7 +96,6 @@ public class Usuario {
     public String getUbicacion() {
         return ubicacion;
     }
-    
     public void setUbicacion(String ubicacion) {
         this.ubicacion = ubicacion;
     }
