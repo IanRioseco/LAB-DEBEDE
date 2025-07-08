@@ -17,6 +17,13 @@ public class ListaDeseosController {
     @Autowired
     private ListaDeseosService listaDeseosService;
 
+    // Endpoint para ranking de productos más deseados
+    @GetMapping("/ranking-mas-deseados")
+    public ResponseEntity<List<com.example.backendTienda.DTO.RankingDeseadosDTO>> getRankingProductosMasDeseados() {
+        List<com.example.backendTienda.DTO.RankingDeseadosDTO> ranking = listaDeseosService.rankingProductosMasDeseados();
+        return ResponseEntity.ok(ranking);
+    }
+
     private ListaDeseosRespuestaDTO toDTO(ListaDeseos lista) {
         ListaDeseosRespuestaDTO dto = new ListaDeseosRespuestaDTO();
         dto.setIdLista(lista.getId());

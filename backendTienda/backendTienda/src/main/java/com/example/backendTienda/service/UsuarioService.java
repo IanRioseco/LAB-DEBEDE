@@ -25,16 +25,18 @@ public class UsuarioService {
         return usuarioRepository.findByCorreo(correo).isPresent();
     }
 
-    public void eliminar(Long id) {
 
+    public void eliminar(Long id) {
+        usuarioRepository.deleteById(id);
     }
 
     public Usuario actualizar(Usuario usuario) {
         return usuarioRepository.save(usuario);
     }
 
+
     public Optional<Usuario> obtenerPorId(Long id) {
-        return null;
+        return usuarioRepository.findById(id);
     }
 
     public List<Usuario> listarTodos() {

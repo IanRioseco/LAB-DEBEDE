@@ -25,4 +25,6 @@ public class CategoriaController {
         categoriaService.inicializarCategorias();
         return "Categorías inicializadas";
     }
+
+    // ...
 }

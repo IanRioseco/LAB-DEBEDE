@@ -22,6 +22,18 @@ public class ListaDeseosService {
     @Autowired
     private ProductoRepository productoRepository;
 
+    public java.util.List<com.example.backendTienda.DTO.RankingDeseadosDTO> rankingProductosMasDeseados() {
+        java.util.List<Object[]> resultados = listaDeseosRepository.rankingProductosMasDeseados();
+        java.util.List<com.example.backendTienda.DTO.RankingDeseadosDTO> ranking = new java.util.ArrayList<>();
+        for (Object[] fila : resultados) {
+            Integer idProducto = (Integer) fila[0];
+            String nombreProducto = (String) fila[1];
+            Long totalDeseado = (Long) fila[2];
+            ranking.add(new com.example.backendTienda.DTO.RankingDeseadosDTO(idProducto, nombreProducto, totalDeseado));
+        }
+        return ranking;
+    }
+
     public ListaDeseos crearListaDeseos(Long idUsuario) {
         Optional<Usuario> usuarioOpt = usuarioRepository.findById(idUsuario);
         if (usuarioOpt.isEmpty()) throw new RuntimeException("Usuario no encontrado");

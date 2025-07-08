@@ -35,4 +35,6 @@ public class TiendaController {
         TiendaDTO tiendaDTO = tiendaService.obtenerTiendaConJefe(id);
         return ResponseEntity.ok(tiendaDTO);
     }
+
+    // ...existing code...
 }

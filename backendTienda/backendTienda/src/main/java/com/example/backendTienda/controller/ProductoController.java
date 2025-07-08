@@ -1,3 +1,4 @@
+
 package com.example.backendTienda.controller;
 
 import com.example.backendTienda.entity.Producto;
@@ -13,8 +14,24 @@ import java.util.stream.Collectors;
 @RestController
 @RequestMapping("/api/productos")
 public class ProductoController {
+    // Endpoint para filtrar productos por ubicación geográfica del cliente
+    @GetMapping("/filtrar-ubicacion")
+    public ResponseEntity<?> filtrarPorUbicacion(@RequestParam(required = false) String ubicacion) {
+        if (ubicacion == null || ubicacion.isBlank()) {
+            return ResponseEntity.badRequest().body("Debe proporcionar el parámetro 'ubicacion' en la URL");
+        }
+        List<Producto> productos = productoService.filtrarPorUbicacion(ubicacion);
+        return ResponseEntity.ok(productos);
+    }
     @Autowired
     private ProductoService productoService;
+
+    // Endpoint para ranking de productos más vendidos
+    @GetMapping("/ranking-mas-vendidos")
+    public ResponseEntity<List<com.example.backendTienda.DTO.RankingDTO>> getRankingProductosMasVendidos() {
+        List<com.example.backendTienda.DTO.RankingDTO> ranking = productoService.rankingProductosMasVendidos();
+        return ResponseEntity.ok(ranking);
+    }
 
     @GetMapping
     public List<Producto> getAllProductos() {
@@ -32,22 +49,50 @@ public class ProductoController {
         return ResponseEntity.ok(dto);
     }
 
+
     @PostMapping
-    public Producto saveProducto(@RequestBody Producto producto) {
-        return productoService.saveProducto(producto);
+    public ResponseEntity<?> saveProducto(@RequestBody Producto producto, @RequestParam Long usuarioId) {
+        java.util.Optional<com.example.backendTienda.entity.Usuario> usuarioOpt = productoService.getUsuarioById(usuarioId);
+        if (!usuarioOpt.isPresent() || !("admin".equalsIgnoreCase(usuarioOpt.get().getRol()) || "jefe".equalsIgnoreCase(usuarioOpt.get().getRol()) || "vendedor".equalsIgnoreCase(usuarioOpt.get().getRol()))) {
+            return ResponseEntity.status(403).body("No autorizado: solo admin, jefe o vendedor pueden crear productos");
+        }
+        Producto creado = productoService.saveProducto(producto);
+        return ResponseEntity.ok(new ProductoDTO(creado));
     }
 
+
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deleteProducto(@PathVariable Integer id) {
+    public ResponseEntity<?> deleteProducto(@PathVariable Integer id, @RequestParam Long usuarioId) {
+        java.util.Optional<com.example.backendTienda.entity.Usuario> usuarioOpt = productoService.getUsuarioById(usuarioId);
+        if (!usuarioOpt.isPresent() || !("admin".equalsIgnoreCase(usuarioOpt.get().getRol()) || "jefe".equalsIgnoreCase(usuarioOpt.get().getRol()))) {
+            return ResponseEntity.status(403).body("No autorizado: solo admin o jefe puede eliminar productos");
+        }
         productoService.deleteProducto(id);
         return ResponseEntity.noContent().build();
     }
 
+
     @PostMapping("/{idProducto}/tiendas/{idTienda}")
-    public ResponseEntity<Producto> asociarProductoATienda(@PathVariable Integer idProducto, @PathVariable Long idTienda) {
+    public ResponseEntity<?> asociarProductoATienda(@PathVariable Integer idProducto, @PathVariable Long idTienda, @RequestParam Long usuarioId) {
+        java.util.Optional<com.example.backendTienda.entity.Usuario> usuarioOpt = productoService.getUsuarioById(usuarioId);
+        if (!usuarioOpt.isPresent() || !("admin".equalsIgnoreCase(usuarioOpt.get().getRol()) || "jefe".equalsIgnoreCase(usuarioOpt.get().getRol()))) {
+            return ResponseEntity.status(403).body("No autorizado: solo admin o jefe puede asociar productos a tiendas");
+        }
         Producto producto = productoService.asociarProductoATienda(idProducto, idTienda);
-        return ResponseEntity.ok(producto);
+        return ResponseEntity.ok(new ProductoDTO(producto));
     }
+    // Permitir solo admin o jefe para actualizar productos
+    @PutMapping("/{id}")
+    public ResponseEntity<?> updateProducto(@PathVariable Integer id, @RequestBody Producto producto, @RequestParam Long usuarioId) {
+        java.util.Optional<com.example.backendTienda.entity.Usuario> usuarioOpt = productoService.getUsuarioById(usuarioId);
+        if (!usuarioOpt.isPresent() || !("admin".equalsIgnoreCase(usuarioOpt.get().getRol()) || "jefe".equalsIgnoreCase(usuarioOpt.get().getRol()))) {
+            return ResponseEntity.status(403).body("No autorizado: solo admin o jefe puede actualizar productos");
+        }
+        producto.setIdProducto(id);
+        Producto actualizado = productoService.saveProducto(producto);
+        return ResponseEntity.ok(new ProductoDTO(actualizado));
+    }
+    // Método auxiliar para obtener usuario desde ProductoService
 
     // DTO para la respuesta de producto
     public static class ProductoDTO {
@@ -59,7 +104,7 @@ public class ProductoController {
         public String urlImagen;
         public String direccionComercial;
         public String categoria;
-        public java.util.List<TiendaDTO> tiendas;
+        public java.util.List<TiendaSimpleDTO> tiendas;
         public ProductoDTO(Producto p) {
             this.idProducto = p.getIdProducto();
             this.nombreProducto = p.getNombreProducto();
@@ -70,18 +115,17 @@ public class ProductoController {
             this.direccionComercial = p.getDireccionComercial();
             this.categoria = (p.getCategoria() != null) ? p.getCategoria().getDescripcion() : null;
             if (p.getTiendas() != null) {
-                this.tiendas = p.getTiendas().stream().map(TiendaDTO::new).collect(Collectors.toList());
+                this.tiendas = p.getTiendas().stream().map(TiendaSimpleDTO::new).collect(Collectors.toList());
             }
         }
     }
-    public static class TiendaDTO {
+    // DTO plano para evitar ciclos
+    public static class TiendaSimpleDTO {
         public Long idTienda;
         public String nombreTienda;
-        public String nombre;
-        public TiendaDTO(com.example.backendTienda.entity.Tienda t) {
+        public TiendaSimpleDTO(com.example.backendTienda.entity.Tienda t) {
             this.idTienda = t.getIdTienda();
             this.nombreTienda = t.getNombreTienda();
-            this.nombre = t.getNombre();
         }
     }
 }

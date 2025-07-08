@@ -1,3 +1,4 @@
+
 package com.example.backendTienda.controller;
 
 import com.example.backendTienda.entity.Usuario;
@@ -59,9 +60,19 @@ public class UsuarioController {
 
     // Actualizar un usuario
     //REVISAR FUNCION
+
     @PutMapping("/{id}")
-    public ResponseEntity<Usuario> actualizarUsuario(@PathVariable Long id, @RequestBody Usuario usuario) {
-        usuario.setId(id); // Establecer el ID recibido como parámetro
+    public ResponseEntity<?> actualizarUsuario(@PathVariable Long id, @RequestBody Usuario usuario, @RequestParam Long usuarioId) {
+        // Solo el propio usuario o admin puede actualizar
+        var usuarioAuthOpt = usuarioService.obtenerPorId(usuarioId);
+        if (usuarioAuthOpt.isEmpty()) {
+            return new ResponseEntity<>("Usuario autenticado no encontrado", HttpStatus.FORBIDDEN);
+        }
+        var usuarioAuth = usuarioAuthOpt.get();
+        if (!usuarioAuth.getId().equals(id) && !"admin".equalsIgnoreCase(usuarioAuth.getRol())) {
+            return new ResponseEntity<>("No autorizado: solo el propio usuario o admin puede actualizar", HttpStatus.FORBIDDEN);
+        }
+        usuario.setId(id);
         try {
             Usuario usuarioActualizado = usuarioService.actualizar(usuario);
             return new ResponseEntity<>(usuarioActualizado, HttpStatus.OK);
@@ -71,9 +82,19 @@ public class UsuarioController {
     }
 
     // Eliminar un usuario
+
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> eliminarUsuario(@PathVariable Long id) {
-        usuarioService.eliminar(id); // Eliminar usuario por ID
+    public ResponseEntity<?> eliminarUsuario(@PathVariable Long id, @RequestParam Long usuarioId) {
+        // Solo el propio usuario o admin puede eliminar
+        var usuarioAuthOpt = usuarioService.obtenerPorId(usuarioId);
+        if (usuarioAuthOpt.isEmpty()) {
+            return new ResponseEntity<>("Usuario autenticado no encontrado", HttpStatus.FORBIDDEN);
+        }
+        var usuarioAuth = usuarioAuthOpt.get();
+        if (!usuarioAuth.getId().equals(id) && !"admin".equalsIgnoreCase(usuarioAuth.getRol())) {
+            return new ResponseEntity<>("No autorizado: solo el propio usuario o admin puede eliminar", HttpStatus.FORBIDDEN);
+        }
+        usuarioService.eliminar(id);
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
 }
