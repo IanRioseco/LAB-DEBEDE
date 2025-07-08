@@ -1,4 +1,7 @@
 package com.example.backendTienda.repository;
 
-public interface MetodoPagoRepository {
+import com.example.backendTienda.entity.MetodoPago;
+import org.springframework.data.jpa.repository.JpaRepository;
+
+public interface MetodoPagoRepository extends JpaRepository<MetodoPago, Long> {
 }
